@@ -136,3 +136,8 @@ Thumbs.db
 # Resume files uploaded by users
 uploads/
 resume_data.db
+resume_data_export.xlsx
+
+# Binary and zip archives
+poppler.zip
+poppler/
