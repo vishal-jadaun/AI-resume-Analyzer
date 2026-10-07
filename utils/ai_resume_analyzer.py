@@ -23,11 +23,42 @@ class AIResumeAnalyzer:
         load_dotenv()
         
         # Configure Google Gemini AI
-        self.google_api_key = os.getenv("GOOGLE_API_KEY")
-        self.openrouter_api_key = os.getenv("OPENROUTER_API_KEY")
+        self.google_api_key = self._get_valid_api_key("GOOGLE_API_KEY", "user_gemini_api_key")
+        self.openrouter_api_key = self._get_valid_api_key("OPENROUTER_API_KEY", "user_openrouter_api_key")
         
         if self.google_api_key:
             genai.configure(api_key=self.google_api_key)
+
+    def _get_valid_api_key(self, env_var, session_key=None):
+        """Retrieve a valid API key from session state, env, or secrets"""
+        placeholders = {
+            "your_google_gemini_api_key_here", "your_google_api_key_here",
+            "your_gemini_api_key_here", "your_openrouter_api_key_here", ""
+        }
+        
+        # Check Streamlit session state
+        try:
+            if session_key and session_key in st.session_state and st.session_state[session_key]:
+                val = str(st.session_state[session_key]).strip()
+                if val and val not in placeholders:
+                    return val
+        except Exception:
+            pass
+
+        # Check environment variable
+        val = os.getenv(env_var, "").strip()
+        if val and val not in placeholders:
+            return val
+
+        # Check Streamlit secrets
+        try:
+            val = str(st.secrets.get(env_var, "")).strip()
+            if val and val not in placeholders:
+                return val
+        except Exception:
+            pass
+
+        return None
     
     def extract_text_from_pdf(self, pdf_file):
         """Extract text from PDF using pdfplumber and OCR if needed"""
@@ -193,8 +224,11 @@ class AIResumeAnalyzer:
         if not resume_text:
             return {"error": "Resume text is required for analysis."}
         
+        self.google_api_key = self._get_valid_api_key("GOOGLE_API_KEY", "user_gemini_api_key")
         if not self.google_api_key:
-            return {"error": "Google API key is not configured. Please add it to your .env file."}
+            return {"error": "Google Gemini API key is missing or not valid. Please add your Gemini API key to the .env file or enter it in the app settings."}
+        
+        genai.configure(api_key=self.google_api_key)
         
         try:
             base_prompt = f"""

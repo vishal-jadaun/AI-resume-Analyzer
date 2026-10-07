@@ -2923,6 +2923,15 @@ class ResumeApp:
                             except Exception as e:
                                 st.error(f"Error during login: {str(e)}")
         
+                with st.expander("🔑 Gemini API Key"):
+                    current_key = st.session_state.get('user_gemini_api_key', os.getenv('GOOGLE_API_KEY', ''))
+                    if current_key == "your_google_gemini_api_key_here":
+                        current_key = ""
+                    api_key_input = st.text_input("Enter Key", value=current_key, type="password", key="gemini_api_key_input", help="Get free key from https://aistudio.google.com/app/apikey")
+                    if api_key_input:
+                        st.session_state.user_gemini_api_key = api_key_input
+                        st.caption("✅ API Key active")
+
             # Display the repository notification in the sidebar
             self.show_repo_notification()
 
