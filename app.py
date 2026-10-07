@@ -1,7 +1,11 @@
 """
 Smart Resume AI - Main Application
 """
+import os
 import time
+from dotenv import load_dotenv
+
+load_dotenv()
 from PIL import Image
 from jobs.job_search import render_job_search
 from datetime import datetime
