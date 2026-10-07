@@ -27,7 +27,7 @@ class AIResumeAnalyzer:
         self.openrouter_api_key = self._get_valid_api_key("OPENROUTER_API_KEY", "user_openrouter_api_key")
         
         if self.google_api_key:
-            genai.configure(api_key=self.google_api_key)
+            genai.configure(api_key=self.google_api_key, transport='rest')
 
     def _get_valid_api_key(self, env_var, session_key=None):
         """Retrieve a valid API key from session state, env, or secrets"""
@@ -228,7 +228,7 @@ class AIResumeAnalyzer:
         if not self.google_api_key:
             return {"error": "Google Gemini API key is missing or not valid. Please add your Gemini API key to the .env file or enter it in the app settings."}
         
-        genai.configure(api_key=self.google_api_key)
+        genai.configure(api_key=self.google_api_key, transport='rest')
         
         try:
             base_prompt = f"""
