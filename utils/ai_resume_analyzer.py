@@ -197,8 +197,6 @@ class AIResumeAnalyzer:
             return {"error": "Google API key is not configured. Please add it to your .env file."}
         
         try:
-            model = genai.GenerativeModel("gemini-2.5-flash")
-            
             base_prompt = f"""
             You are an expert resume analyst with deep knowledge of industry standards, job requirements, and hiring practices across various fields. Your task is to provide a comprehensive, detailed analysis of the resume provided.
             
@@ -264,7 +262,26 @@ class AIResumeAnalyzer:
                 [List specific requirements from the job description that are not addressed in the resume, with recommendations on how to address each gap]
                 """
             
-            response = model.generate_content(base_prompt)
+            candidate_models = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro", "gemini-pro"]
+            response = None
+            last_err = None
+            
+            for model_name in candidate_models:
+                try:
+                    model = genai.GenerativeModel(model_name)
+                    res = model.generate_content(base_prompt)
+                    if res and res.text:
+                        response = res
+                        break
+                except Exception as me:
+                    last_err = me
+                    continue
+            
+            if response is None or not getattr(response, 'text', None):
+                if last_err:
+                    raise last_err
+                return {"error": "Failed to get response from Gemini AI."}
+
             analysis = response.text.strip()
             
             # Extract resume score if present
