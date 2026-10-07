@@ -1,0 +1,7 @@
+chromium
+chromium-driver
+xvfb
+tesseract-ocr
+poppler-utils
+libglib2.0-0
+libnss3
