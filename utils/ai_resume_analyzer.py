@@ -296,7 +296,11 @@ class AIResumeAnalyzer:
                 [List specific requirements from the job description that are not addressed in the resume, with recommendations on how to address each gap]
                 """
             
-            candidate_models = ["gemini-1.5-flash", "gemini-2.0-flash", "gemini-1.5-pro", "gemini-pro"]
+            candidate_models = [
+                "gemini-3.8-flash", "gemini-3.7-flash", "gemini-3.5-flash",
+                "gemini-flash-latest", "gemini-pro-latest", "gemini-2.5-flash",
+                "gemini-1.5-flash", "gemini-2.0-flash", "gemini-pro"
+            ]
             response = None
             last_err = None
             
